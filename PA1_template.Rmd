@@ -1,25 +1,133 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Project1"
+author: "Cedric Williams"
+date: "December 14, 2014"
+output: html_document
 ---
 
 
-## Loading and preprocessing the data
+Hello Peers.  I've created a function called project1() and commented the question and which variable is the answer. Below is the R code with eval=TRUE. Then beneath my R code is the compiled code with graphs. Happy grading!!
+
+
+```{r, eval=TRUE}
+project1 <-  function() {
+  
+  require(lubridate)
+  require(data.table)
+  ##Loading and preprocessing the data
+  
+  ##Load the data - This is the first step in the project.
+  raw.ans <<- read.csv("activity.csv", na.strings="NA")
+  clean.ans <<- na.omit(raw.ans)  ##We omitted the NA's in processing
+  
+  clean.ans$date <<- ymd(clean.ans$date)  ##structure date format
+  rownames(clean.ans) <<- NULL  ##remove rownames from data frame
+  
+  ##2.1 Make histogram of the toal number of steps taken each day
+  ans <<- aggregate(steps~date,sum, data=clean.ans) ##sum stems by date
+  print("2.1 Make histogram of the toal number of steps taken each day")
+  plot(ans$date, ans$steps, type="h") ##plot answer
+  
+  ##2.2 Calculate and report the mean and median total number of steps taken per day
+  ans$mean <<- aggregate(steps~date, mean, data=clean.ans)[,2] ##aggregate by mean
+  ans$median <<- aggregate(steps~date, median, data=clean.ans)[,2]  ##aggregate by median
+  
+  print("2.2 Calculate and report the mean and median total number of steps taken per day")
+  print(ans[1:5,]) ##print answer to 2.2
+
+  ##3.1 what is the average number of steps taken, averaged across all days (y-axis)
+  ans.3a <<- aggregate(steps~interval,sum,data=clean.ans) ##sum steps by interval
+  print("3.1 what is the average number of steps taken, averaged across all days (y-axis)")
+  plot(ans.3a$interval,ans.3a$steps, type="l")  ##plot answer to 3A
+  
+  ##3.2 which 5 mintue interval, on average across all the days contains the maximum number of steps
+  print("3.2 which 5 mintue interval, on average across all the days contains the maximum number of steps")
+  ans.3b <<- ans.3a[ans.3a$steps == max(ans.3a$steps),] 
+  print(ans.3b) ##print answer to 3.2
+  
+  
+  ##4.1 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA's)
+  ans.4a <<- nrow(raw.ans) - nrow(clean.ans)
+  print("4.1 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA's)")
+  print(ans.4a) ##print answer to 4.1
+  
+  ##4.2 Devise a strategy for filling in all of the missing values in the dataset
+  raw2.ans <<- raw.ans
+  raw2.ans$date <<- ymd(raw2.ans$date)
+  
+  print("4.2 Devise a strategy for filling in all of the missing values in the dataset")
+  print("Our strategy was to fill the missing values with 0 ")
+  
+
+  ##4.3 Create a new dataset that is equal to the original dataset but with the missing data filled in
+  
+  raw2.ans[is.na(raw.ans)] <<- 0 ##Missing values are recorded as 0.  NA's are recorded as 0.
+  
+  print("4.3 Create a new dataset that is equal to the original dataset but with the missing data filled in")
+  print("Missing Value Dataset created")
+  
+  
+  ##4.4a Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
+  
+  ans4.4a <<- plot(raw2.ans$date, raw2.ans$steps, type="h") 
+  ans4.4a.mean <<- aggregate(steps~date, mean, data=raw2.ans)
+  ans4.4a.median <<- aggregate(steps~date, median, data=raw2.ans)
+  
+  
+  print("4.4a Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.")
+  print(ans4.4a.mean)
+  print(ans4.4a.median)
+  
+  ##4.4b Do these values differ from the estimates from the first part of the assignment?
+  
+  ans.4b.mean <<- mean(ans$mean) - mean(ans4.4a.mean$steps)
+  
+  
+  
+  ans.4b.median <<- mean(ans$median) - mean(ans4.4a.median$steps)
+  print("4.4b Do these values differ from the estimates from the first part of the assignment?")
+  print(paste0("Difference between means is: ",ans.4b.median))
+  print(paste0("Difference between medians is: ", ans.4b.median))
+  
+  
+  ##4.4c What is the impact of inputing missing data on the estimates of the total daily number of steps?
+  print("What is the impact of inputing missing data on the estimates of the total daily number of steps?")
+  print("The impact lowered the mean when we replaced NA's with zeros.")
+  print("Median was not affected since we replaced NA's with zeros are zero was the median number.")
+  
+  
+  ##5.1 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+
+  
+  for( i in 1:nrow(clean.ans)){
+    
+    
+    clean.ans$wday[i]<<- weekdays(clean.ans$date[i])
+    
+    if(clean.ans$wday[i] == "Sunday" | clean.ans$wday[i] =="Saturday") {
+      
+      clean.ans$wday[i] <<- "Weekend"
+      
+    } else { clean.ans$wday[i] <<- "Weekday"}
+    
+    next
+    
+  }
+  
+  print("5.1 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day")
+  head(clean.ans)
+  
+  
+  ##5.2 Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)
+
+ 
+
+
+}
+project1()
 
 
 
-## What is mean total number of steps taken per day?
+```
 
 
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
